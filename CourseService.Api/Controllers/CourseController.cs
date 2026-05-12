@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CourseService.Api.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CourseService.Api.Controllers;
 
@@ -19,6 +20,7 @@ public class CourseController : ControllerBase
     ];
 
     // Hämtar alla kurser med sökning, filtrering och pagination
+    
     [HttpGet]
     public IActionResult GetAllCourses(
         [FromQuery] int page = 1,
@@ -68,6 +70,7 @@ public class CourseController : ControllerBase
     }
 
     // Hämtar en specifik kurs via id
+   
     [HttpGet("{id}")]
     public IActionResult GetCourseById(int id)
     {
@@ -85,6 +88,7 @@ public class CourseController : ControllerBase
     }
 
     // Skapar en ny kurs
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public IActionResult CreateCourse([FromBody] CourseRequestDto request)
     {
@@ -119,6 +123,7 @@ public class CourseController : ControllerBase
     }
 
     // Uppdaterar en kurs
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public IActionResult UpdateCourse(int id, [FromBody] CourseRequestDto request)
     {
@@ -152,6 +157,7 @@ public class CourseController : ControllerBase
     }
 
     // Tar bort en kurs
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public IActionResult DeleteCourse(int id)
     {

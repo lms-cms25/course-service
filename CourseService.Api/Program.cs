@@ -20,6 +20,10 @@ builder.Services.AddCors(options =>
 // Lägger till controllers för REST API
 builder.Services.AddControllers();
 
+// Swagger/OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 // Lägger till CourseService i DI-container
 builder.Services.AddScoped<ICourseService, CourseService.Api.Services.CourseService>();
 
@@ -50,6 +54,11 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    // Swagger
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
+    // Scalar
     app.MapOpenApi();
 
     app.MapScalarApiReference(options =>
@@ -57,6 +66,7 @@ if (app.Environment.IsDevelopment())
         options.Title = "Course Service API";
     });
 
+    // Start page
     app.MapGet("/", () => Results.Redirect("/scalar"));
 }
 
