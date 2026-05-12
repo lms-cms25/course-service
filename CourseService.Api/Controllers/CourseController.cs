@@ -19,14 +19,15 @@ public class CourseController : ControllerBase
         new(6, "Adobe XD for Designer", "David Martinez", "Design", "4 weeks", "Beginner", "/images/course6.jpg", 5, "Adobe XD design course", 60)
     ];
 
-    // Hämtar alla kurser med sökning, filtrering och pagination
-    
+    // Hämtar alla kurser med sökning, filtrering, sortering och pagination
     [HttpGet]
     public IActionResult GetAllCourses(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 3,
         [FromQuery] string? search = null,
-        [FromQuery] string? category = null)
+        [FromQuery] string? category = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] string? sortOrder = "asc")
     {
         if (page < 1)
             page = 1;
@@ -50,6 +51,41 @@ public class CourseController : ControllerBase
                 c.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
         }
 
+        // Sorterar kurser efter valt fält
+        if (!string.IsNullOrWhiteSpace(sortBy))
+        {
+            var descending = sortOrder?.Equals("desc", StringComparison.OrdinalIgnoreCase) == true;
+
+            query = sortBy.ToLower() switch
+            {
+                "title" => descending
+                    ? query.OrderByDescending(c => c.Title)
+                    : query.OrderBy(c => c.Title),
+
+                "category" => descending
+                    ? query.OrderByDescending(c => c.Category)
+                    : query.OrderBy(c => c.Category),
+
+                "rating" => descending
+                    ? query.OrderByDescending(c => c.Rating)
+                    : query.OrderBy(c => c.Rating),
+
+                "students" => descending
+                    ? query.OrderByDescending(c => c.Students)
+                    : query.OrderBy(c => c.Students),
+
+                "duration" => descending
+                    ? query.OrderByDescending(c => c.Duration)
+                    : query.OrderBy(c => c.Duration),
+
+                "level" => descending
+                    ? query.OrderByDescending(c => c.Level)
+                    : query.OrderBy(c => c.Level),
+
+                _ => query
+            };
+        }
+
         var filteredCourses = query.ToList();
 
         var totalCount = filteredCourses.Count;
@@ -70,7 +106,6 @@ public class CourseController : ControllerBase
     }
 
     // Hämtar en specifik kurs via id
-   
     [HttpGet("{id}")]
     public IActionResult GetCourseById(int id)
     {
