@@ -17,9 +17,13 @@ public class CourseController : ControllerBase
         new(6, "Adobe XD for Designer", "David Martinez", "Design", "4 weeks", "Beginner", "/images/course6.jpg", 5)
     ];
 
-    // Hämtar alla kurser med pagination
+    // Hämtar alla kurser med sökning, filtrering och pagination
     [HttpGet]
-    public IActionResult GetAllCourses([FromQuery] int page = 1, [FromQuery] int pageSize = 3)
+    public IActionResult GetAllCourses(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 3,
+        [FromQuery] string? search = null,
+        [FromQuery] string? category = null)
     {
         // Säkerställer att värden inte blir fel
         if (page < 1)
@@ -28,10 +32,31 @@ public class CourseController : ControllerBase
         if (pageSize < 1)
             pageSize = 3;
 
-        var totalCount = Courses.Count;
+        // Börjar med alla kurser
+        var query = Courses.AsQueryable();
+
+        // Filtrerar på söktext
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(c =>
+                c.Title.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                c.Instructor.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                c.Category.Contains(search, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Filtrerar på kategori
+        if (!string.IsNullOrWhiteSpace(category))
+        {
+            query = query.Where(c =>
+                c.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var filteredCourses = query.ToList();
+
+        var totalCount = filteredCourses.Count;
 
         // Pagination logik
-        var items = Courses
+        var items = filteredCourses
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToList();
