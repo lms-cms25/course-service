@@ -25,17 +25,14 @@ public class CourseController : ControllerBase
         [FromQuery] string? search = null,
         [FromQuery] string? category = null)
     {
-        // Säkerställer att värden inte blir fel
         if (page < 1)
             page = 1;
 
         if (pageSize < 1)
             pageSize = 3;
 
-        // Börjar med alla kurser
         var query = Courses.AsQueryable();
 
-        // Filtrerar på söktext
         if (!string.IsNullOrWhiteSpace(search))
         {
             query = query.Where(c =>
@@ -44,7 +41,6 @@ public class CourseController : ControllerBase
                 c.Category.Contains(search, StringComparison.OrdinalIgnoreCase));
         }
 
-        // Filtrerar på kategori
         if (!string.IsNullOrWhiteSpace(category))
         {
             query = query.Where(c =>
@@ -55,7 +51,6 @@ public class CourseController : ControllerBase
 
         var totalCount = filteredCourses.Count;
 
-        // Pagination logik
         var items = filteredCourses
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -69,6 +64,23 @@ public class CourseController : ControllerBase
             totalCount,
             totalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
         });
+    }
+
+    // Hämtar en specifik kurs via id
+    [HttpGet("{id}")]
+    public IActionResult GetCourseById(int id)
+    {
+        var course = Courses.FirstOrDefault(c => c.Id == id);
+
+        if (course is null)
+        {
+            return NotFound(new
+            {
+                message = $"Course with id {id} was not found"
+            });
+        }
+
+        return Ok(course);
     }
 }
 
