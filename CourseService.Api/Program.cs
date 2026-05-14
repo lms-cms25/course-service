@@ -1,10 +1,16 @@
 using CourseService.Api.Data;
+using CourseService.Api.Data.Seed;
 using CourseService.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Kopplar EF Core till SQL Server
+builder.Services.AddDbContext<CourseDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Tillåter frontend att anropa backend lokalt
 builder.Services.AddCors(options =>
@@ -27,21 +33,12 @@ builder.Services.AddSwaggerGen();
 // Lägger till CourseService i DI-container
 builder.Services.AddScoped<ICourseService, CourseService.Api.Services.CourseService>();
 
-// Kopplar EF Core till SQL Server
-builder.Services.AddDbContext<CourseDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 // Lägger till JWT Bearer authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        // Här kommer IdentityService URL senare
         options.Authority = builder.Configuration["Jwt:Authority"];
-
-        // Tillåter lokal utveckling utan HTTPS metadata
         options.RequireHttpsMetadata = false;
-
-        // Kontrollerar token audience
         options.Audience = builder.Configuration["Jwt:Audience"];
     });
 
@@ -80,4 +77,18 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Skapar databasen och lägger till testkurser om tabellen är tom
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
+
+    db.Database.Migrate();
+
+    CourseSeeder.SeedCourses(db);
+}
+
 app.Run();
+
+public partial class Program
+{
+}
