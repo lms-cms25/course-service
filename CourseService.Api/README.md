@@ -153,3 +153,66 @@ Azure SQL Database.
 
 CMS25 .NET2 – Nackademin  
 Shiko LMS Project
+
+## System Architecture Diagram
+
+![Course Service System Architecture](docs/course-service-system-architecture.png)
+
+## Sequence Diagrams
+
+### Get Courses Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend as Next.js Frontend
+    participant API as Course Service API
+    participant DB as SQL Server
+
+    User->>Frontend: Opens Courses page
+    Frontend->>API: GET /api/courses?page=1&pageSize=3
+    API->>DB: Reads courses with EF Core
+    DB-->>API: Returns courses
+    API-->>Frontend: Returns JSON response
+    Frontend-->>User: Shows course cards
+```
+
+### Admin Create Course Flow
+
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant Frontend as Admin Frontend
+    participant API as Course Service API
+    participant Auth as JWT Authorization
+    participant DB as SQL Server
+
+    Admin->>Frontend: Fills in course form
+    Frontend->>API: POST /api/courses with JWT token
+    API->>Auth: Validates Admin role
+    Auth-->>API: Authorized
+    API->>DB: Saves new course with EF Core
+    DB-->>API: Course saved
+    API-->>Frontend: Returns created course
+    Frontend-->>Admin: Shows updated course list
+```
+
+### Delete Course Flow
+
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant Frontend as Admin Frontend
+    participant API as Course Service API
+    participant Auth as JWT Authorization
+    participant DB as SQL Server
+
+    Admin->>Frontend: Clicks Delete
+    Frontend->>API: DELETE /api/courses/{id} with JWT token
+    API->>Auth: Validates Admin role
+    Auth-->>API: Authorized
+    API->>DB: Deletes course
+    DB-->>API: Course deleted
+    API-->>Frontend: Returns 204 No Content
+    Frontend-->>Admin: Removes course from list
+```
