@@ -4,6 +4,7 @@ using CourseService.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseService.Api.Migrations
 {
     [DbContext(typeof(CourseDbContext))]
-    partial class CourseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260512165416_UpdateSeedCourses")]
+    partial class UpdateSeedCourses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,7 +79,7 @@ namespace CourseService.Api.Migrations
                         {
                             Id = 1,
                             Category = "Graphic Design",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 5, 12, 16, 54, 15, 639, DateTimeKind.Utc).AddTicks(8657),
                             Description = "Learn machine learning basics",
                             Duration = "6 weeks",
                             Image = "/images/course1.jpg",
@@ -90,7 +93,7 @@ namespace CourseService.Api.Migrations
                         {
                             Id = 2,
                             Category = "UI/UX Design",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 5, 12, 16, 54, 15, 640, DateTimeKind.Utc).AddTicks(314),
                             Description = "Business analytics course",
                             Duration = "8 weeks",
                             Image = "/images/course2.jpg",
@@ -104,7 +107,7 @@ namespace CourseService.Api.Migrations
                         {
                             Id = 3,
                             Category = "Brand Identity",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 5, 12, 16, 54, 15, 640, DateTimeKind.Utc).AddTicks(316),
                             Description = "Marketing fundamentals",
                             Duration = "5 weeks",
                             Image = "/images/course3.jpg",
@@ -118,7 +121,7 @@ namespace CourseService.Api.Migrations
                         {
                             Id = 4,
                             Category = "Web Design",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 5, 12, 16, 54, 15, 640, DateTimeKind.Utc).AddTicks(318),
                             Description = "Product design basics",
                             Duration = "7 weeks",
                             Image = "/images/course4.jpg",
@@ -132,7 +135,7 @@ namespace CourseService.Api.Migrations
                         {
                             Id = 5,
                             Category = "Development",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 5, 12, 16, 54, 15, 640, DateTimeKind.Utc).AddTicks(320),
                             Description = "Backend development course",
                             Duration = "10 weeks",
                             Image = "/images/course5.jpg",
@@ -146,7 +149,7 @@ namespace CourseService.Api.Migrations
                         {
                             Id = 6,
                             Category = "Design",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 5, 12, 16, 54, 15, 640, DateTimeKind.Utc).AddTicks(322),
                             Description = "Adobe XD design course",
                             Duration = "4 weeks",
                             Image = "/images/course6.jpg",

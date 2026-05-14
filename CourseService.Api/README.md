@@ -1,153 +1,155 @@
-﻿# Course Service
+﻿# Course Service API
 
-Course Service är en microservice för kursdelen i vårt LMS-projekt.
+Course Service is a part of the Shiko LMS platform built with ASP.NET Core Web API and Next.js.
 
-Servicen ansvarar för att hantera kurser i systemet.
+The service handles course management functionality including getting all courses, getting courses by id, creating courses, updating courses and deleting courses.
 
-## Funktioner
+The project uses Entity Framework Core with SQL Server and follows a microservice-based architecture.
 
-I denna service kan användaren:
+# Technologies
 
-- hämta alla kurser
-- söka kurser
-- filtrera kurser
-- sortera kurser
-- visa kursdetaljer
-- skapa kurs
-- uppdatera kurs
-- ta bort kurs
-
-## Admin funktioner
-
-Admin kan:
-
-- skapa nya kurser
-- uppdatera befintliga kurser
-- ta bort kurser
-
-Endpoints för admin:
-
-
-POST /api/courses
-PUT /api/courses/{id}
-DELETE /api/courses/{id}
-
-## Tekniker
-
-Projektet använder:
-
+Backend:
 - ASP.NET Core Web API
-- REST API
-- JWT Bearer Authentication
-- Role-based Authorization
-- EF Core
+- Entity Framework Core
 - SQL Server
-- Swagger
-- Scalar/OpenAPI
-- Docker
-- Git branches
+- Swagger / OpenAPI
+- Scalar
+- JWT Authentication
 
-## API Endpoints
+Frontend:
+- Next.js
+- TypeScript
+- CSS Modules
 
-### Hämta alla kurser
+Other:
+- GitHub
+- Azure App Service
+- Azure SQL Database
 
+# Features
+
+Course API:
+- GET all courses
+- GET course by id
+- POST create course
+- PUT update course
+- DELETE course
+
+Admin Panel:
+- Create courses
+- Edit courses
+- Delete courses
+
+Documentation:
+- Swagger documentation
+- Scalar API documentation
+
+# Project Structure
+
+Backend:
+CourseService.Api
+
+Folders:
+- Controllers
+- Data
+- Dtos
+- Models
+- Services
+- Migrations
+
+Frontend:
+- src/app/courses
+- src/app/courses/admin
+
+# Frontend Routes
+
+Courses:
+http://localhost:3000/courses
+
+Admin Courses:
+http://localhost:3000/courses/admin
+
+
+# API Endpoints
+
+Get all courses:
 GET /api/courses
-Hämta kursdetaljer
+
+Get course by id:
 GET /api/courses/{id}
-Söka och filtrera kurser
-GET /api/courses?search=backend&category=Development
-Sortera kurser
-GET /api/courses?sortBy=rating&sortOrder=desc
-Pagination
-GET /api/courses?page=1&pageSize=3
-Skapa kurs
+
+Create course:
 POST /api/courses
-Uppdatera kurs
+
+Update course:
 PUT /api/courses/{id}
-Ta bort kurs
+
+Delete course:
 DELETE /api/courses/{id}
-Authorization
 
-Admin endpoints skyddas med:
+# Swagger
 
-[Authorize(Roles = "Admin")]
+Swagger documentation:
+https://localhost:7102/swagger
 
-Om användaren inte har token returnerar API:
+# Local Setup
 
-401 Unauthorized
-Validation
+Backend:
 
-Validation finns i CourseRequestDto.
+Install packages:
 
-Exempel:
+dotnet restore
 
-Title krävs
-Description krävs
-Category krävs
-Duration krävs
-Level krävs
-Rating måste vara mellan 0 och 5
-Pagination
+Run migrations:
 
-API returnerar:
+dotnet ef database update
 
-items
-page
-pageSize
-totalCount
-totalPages
-Sorting
+Run API:
 
-API stödjer sortering med:
+dotnet run
 
-title
-category
-rating
-students
-duration
-level
+Frontend:
 
-Exempel:
+Install packages:
 
-GET /api/courses?sortBy=title&sortOrder=asc
-Swagger och Scalar
+npm install
 
-Swagger används på:
+Run frontend:
 
-/swagger
+npm run dev
 
-Scalar används på:
+# Database
 
-/scalar
-Docker
+The project uses SQL Server with Entity Framework Core migrations.
 
-Projektet innehåller en Dockerfile för containerisering.
+Seed data is automatically added when the application starts.
 
-Branches
-feature/course-service-setup
+# Security
 
-Grundstruktur för Course Service.
+The API supports:
+- JWT Authentication
+- Authorization
+- Protected admin functionality
 
-feature/search-filter-courses
+# Testing
 
-Sökning och filtrering av kurser.
+The project includes testing for:
+- API functionality
+- CRUD operations
+- Course service logic
 
-feature/course-details-endpoint
+# Deployment
 
-Endpoint för kursdetaljer.
+Frontend:
+Deployed with Vercel.
 
-feature/admin-course-management
+Backend:
+Deployed with Azure App Service.
 
-Admin CRUD endpoints.
+Database:
+Azure SQL Database.
 
-feature/protect-admin-endpoints
+# Authors
 
-JWT authorization för admin endpoints.
-
-feature/course-validation
-
-Validation för kursdata.
-
-feature/course-sorting
-
-Sortering av kurser.
+CMS25 .NET2 – Nackademin  
+Shiko LMS Project

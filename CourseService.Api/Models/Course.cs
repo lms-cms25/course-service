@@ -32,5 +32,5 @@ public class Course
     public int Students { get; set; }
 
     // Datum när kursen skapades
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 }
