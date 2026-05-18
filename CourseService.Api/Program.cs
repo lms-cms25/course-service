@@ -78,13 +78,19 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Skapar databasen och lägger till testkurser om tabellen är tom
-using (var scope = app.Services.CreateScope())
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrEmpty(connectionString))
 {
-    var db = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
 
-    db.Database.Migrate();
 
-    CourseSeeder.SeedCourses(db);
+    using (var scope = app.Services.CreateScope())
+
+    {
+        var db = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
+        db.Database.Migrate();
+        CourseSeeder.SeedCourses(db);
+    }
 }
 
 app.Run();
