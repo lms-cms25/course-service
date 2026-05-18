@@ -49,8 +49,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
+
     // Swagger
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -65,7 +64,7 @@ if (app.Environment.IsDevelopment())
 
     // Start page
     app.MapGet("/", () => Results.Redirect("/scalar"));
-}
+
 
 app.UseHttpsRedirection();
 
