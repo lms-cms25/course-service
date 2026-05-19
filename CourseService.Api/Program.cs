@@ -46,6 +46,8 @@ builder.Services.AddAuthorization();
 // Lägger till OpenAPI/Scalar dokumentation
 builder.Services.AddOpenApi();
 
+Console.WriteLine("APP STARTING...");
+
 var app = builder.Build();
 
 // Kör migrations automatiskt när appen startar
@@ -53,18 +55,18 @@ try
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
-
-    db.Database.Migrate();
-
-    // Seeder är tillfälligt avstängd för att undvika Azure startup crash
-    // CourseSeeder.SeedCourses(db);
+  
+  db.Database.Migrate();
+  CourseSeeder.SeedCourses(db);
 }
+ 
 catch (Exception ex)
 {
     Console.WriteLine(ex.ToString());
     throw;
 }
 
+   
 // Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -90,8 +92,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
 app.Run();
 
 public partial class Program
 {
-}
+} 

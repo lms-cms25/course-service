@@ -28,7 +28,16 @@ public class CourseController : ControllerBase
         [FromQuery] string? sortBy = null,
         [FromQuery] string? sortOrder = "asc")
     {
-        var query = _context.Courses.AsQueryable();
+        if (page < 1)
+            page = 1;
+
+        if (pageSize < 1)
+            pageSize = 3;
+
+        // Börjar med alla kurser från databasen och tar med programmet
+        var query = _context.Courses
+            .Include(c => c.StudyProgram)
+            .AsQueryable();
 
         var totalCount = await query.CountAsync();
 
@@ -46,7 +55,8 @@ public class CourseController : ControllerBase
                 c.Rating,
                 c.Description,
                 c.Students,
-                c.StudyProgramId
+                c.StudyProgramId,
+                c.StudyProgram != null ? c.StudyProgram.Name : ""
             ))
             .ToListAsync();
 
@@ -65,6 +75,7 @@ public class CourseController : ControllerBase
     public async Task<IActionResult> GetCourseById(int id)
     {
         var course = await _context.Courses
+            .Include(c => c.StudyProgram)
             .Where(c => c.Id == id)
             .Select(c => new CourseDto(
                 c.Id,
@@ -77,7 +88,8 @@ public class CourseController : ControllerBase
                 c.Rating,
                 c.Description,
                 c.Students,
-                c.StudyProgramId
+                c.StudyProgramId,
+                c.StudyProgram != null ? c.StudyProgram.Name : ""
             ))
             .FirstOrDefaultAsync();
 
@@ -118,6 +130,10 @@ public class CourseController : ControllerBase
         _context.Courses.Add(course);
         await _context.SaveChangesAsync();
 
+        // Hämtar programnamnet efter att kursen har sparats
+        var program = await _context.StudyPrograms
+            .FirstOrDefaultAsync(p => p.Id == course.StudyProgramId);
+
         var response = new CourseDto(
             course.Id,
             course.Title,
@@ -129,7 +145,8 @@ public class CourseController : ControllerBase
             course.Rating,
             course.Description,
             course.Students,
-            course.StudyProgramId
+            course.StudyProgramId,
+            program?.Name ?? ""
         );
 
         return CreatedAtAction(nameof(GetCourseById), new { id = course.Id }, response);
@@ -165,6 +182,10 @@ public class CourseController : ControllerBase
 
         await _context.SaveChangesAsync();
 
+        // Hämtar programnamnet efter uppdatering
+        var program = await _context.StudyPrograms
+            .FirstOrDefaultAsync(p => p.Id == course.StudyProgramId);
+
         var response = new CourseDto(
             course.Id,
             course.Title,
@@ -176,7 +197,8 @@ public class CourseController : ControllerBase
             course.Rating,
             course.Description,
             course.Students,
-            course.StudyProgramId
+            course.StudyProgramId,
+            program?.Name ?? ""
         );
 
         return Ok(response);
@@ -216,7 +238,6 @@ public record CourseDto(
     double Rating,
     string Description,
     int Students,
-
-    // Program som kursen tillhör
-    int StudyProgramId
+    int StudyProgramId,
+    string StudyProgramName
 );
