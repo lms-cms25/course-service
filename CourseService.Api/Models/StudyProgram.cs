@@ -9,5 +9,6 @@ public class StudyProgram
     public string Description { get; set; } = string.Empty;
 
     // Lista med kurser
+
     public List<Course> Courses { get; set; } = new();
 }
