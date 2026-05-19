@@ -87,7 +87,9 @@ if (!string.IsNullOrEmpty(connectionString))
 
     {
         var db = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
-        db.Database.Migrate();
+
+        //db.Database.Migrate();
+
         CourseSeeder.SeedCourses(db);
     }
 }
@@ -96,4 +98,4 @@ app.Run();
 
 public partial class Program
 {
-}
+} 
