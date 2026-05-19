@@ -1,5 +1,4 @@
 using CourseService.Api.Data;
-using CourseService.Api.Data.Seed;
 using CourseService.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -49,22 +48,37 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// Kör migrations automatiskt när appen startar
+try
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
 
-    // Swagger
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    db.Database.Migrate();
 
-    // Scalar
-    app.MapOpenApi();
+    // Seeder är tillfälligt avstängd för att undvika Azure startup crash
+    // CourseSeeder.SeedCourses(db);
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.ToString());
+    throw;
+}
 
-    app.MapScalarApiReference(options =>
-    {
-        options.Title = "Course Service API";
-    });
+// Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
 
-    // Start page
-    app.MapGet("/", () => Results.Redirect("/scalar"));
+// Scalar
+app.MapOpenApi();
 
+app.MapScalarApiReference(options =>
+{
+    options.Title = "Course Service API";
+});
+
+// Start page
+app.MapGet("/", () => Results.Redirect("/scalar"));
 
 app.UseHttpsRedirection();
 
@@ -75,22 +89,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Skapar databasen och lägger till testkurser om tabellen är tom
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (!string.IsNullOrEmpty(connectionString))
-{
-
-
-    using (var scope = app.Services.CreateScope())
-
-    {
-        var db = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
-        db.Database.Migrate();
-        CourseSeeder.SeedCourses(db);
-    }
-}
 
 app.Run();
 
