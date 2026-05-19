@@ -3,6 +3,7 @@ using CourseService.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using CourseService.Api.Data.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,7 +58,7 @@ try
     var db = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
   
   db.Database.Migrate();
-  CourseSeeder.SeedCourses(db);
+  
 }
  
 catch (Exception ex)
