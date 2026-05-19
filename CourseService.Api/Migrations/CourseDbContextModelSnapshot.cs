@@ -63,11 +63,16 @@ namespace CourseService.Api.Migrations
                     b.Property<int>("Students")
                         .HasColumnType("int");
 
+                    b.Property<int>("StudyProgramId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudyProgramId");
 
                     b.ToTable("Courses");
 
@@ -84,6 +89,7 @@ namespace CourseService.Api.Migrations
                             Level = "Beginner",
                             Rating = 5.0,
                             Students = 120,
+                            StudyProgramId = 0,
                             Title = "Machine Learning Basics"
                         },
                         new
@@ -98,6 +104,7 @@ namespace CourseService.Api.Migrations
                             Level = "Intermediate",
                             Rating = 5.0,
                             Students = 95,
+                            StudyProgramId = 0,
                             Title = "Business Analytics & Strategy"
                         },
                         new
@@ -112,6 +119,7 @@ namespace CourseService.Api.Migrations
                             Level = "Beginner",
                             Rating = 5.0,
                             Students = 70,
+                            StudyProgramId = 0,
                             Title = "Content Marketing"
                         },
                         new
@@ -126,6 +134,7 @@ namespace CourseService.Api.Migrations
                             Level = "Beginner",
                             Rating = 5.0,
                             Students = 110,
+                            StudyProgramId = 0,
                             Title = "Product Design for Beginner"
                         },
                         new
@@ -140,6 +149,7 @@ namespace CourseService.Api.Migrations
                             Level = "Intermediate",
                             Rating = 4.0,
                             Students = 150,
+                            StudyProgramId = 0,
                             Title = "Backend Developer"
                         },
                         new
@@ -154,8 +164,46 @@ namespace CourseService.Api.Migrations
                             Level = "Beginner",
                             Rating = 5.0,
                             Students = 60,
+                            StudyProgramId = 0,
                             Title = "Adobe XD for Designer"
                         });
+                });
+
+            modelBuilder.Entity("CourseService.Api.Models.StudyProgram", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StudyPrograms");
+                });
+
+            modelBuilder.Entity("CourseService.Api.Models.Course", b =>
+                {
+                    b.HasOne("CourseService.Api.Models.StudyProgram", "StudyProgram")
+                        .WithMany("Courses")
+                        .HasForeignKey("StudyProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StudyProgram");
+                });
+
+            modelBuilder.Entity("CourseService.Api.Models.StudyProgram", b =>
+                {
+                    b.Navigation("Courses");
                 });
 #pragma warning restore 612, 618
         }

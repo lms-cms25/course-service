@@ -31,4 +31,7 @@ public class CourseRequestDto
 
     [Range(0, int.MaxValue, ErrorMessage = "Students cannot be negative")]
     public int Students { get; set; }
+
+    // Id för programmet
+    public int StudyProgramId { get; set; }
 }

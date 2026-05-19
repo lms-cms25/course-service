@@ -13,6 +13,8 @@ public class CourseDbContext : DbContext
     // Tabellen Courses i databasen
     public DbSet<Course> Courses => Set<Course>();
 
+    public DbSet<StudyProgram> StudyPrograms { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
