@@ -33,4 +33,8 @@ public class Course
 
     // Datum när kursen skapades
     public DateTime CreatedAt { get; set; }
+
+    public int StudyProgramId { get; set; }
+
+    public StudyProgram? StudyProgram { get; set; }
 }

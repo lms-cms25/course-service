@@ -16,4 +16,6 @@ public class CourseResponseDto
 
     // Kursens lärare
     public string Instructor { get; set; } = string.Empty;
+
+    public int StudyProgramId { get; set; }
 }

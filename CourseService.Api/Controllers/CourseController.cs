@@ -18,7 +18,7 @@ public class CourseController : ControllerBase
         _context = context;
     }
 
-    // Hämtar alla kurser med sökning, filtrering, sortering och pagination
+    // Hämtar alla kurser
     [HttpGet]
     public async Task<IActionResult> GetAllCourses(
         [FromQuery] int page = 1,
@@ -28,46 +28,7 @@ public class CourseController : ControllerBase
         [FromQuery] string? sortBy = null,
         [FromQuery] string? sortOrder = "asc")
     {
-        if (page < 1)
-            page = 1;
-
-        if (pageSize < 1)
-            pageSize = 3;
-
-        // Börjar med alla kurser från databasen
         var query = _context.Courses.AsQueryable();
-
-        // Filtrerar på söktext
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            query = query.Where(c =>
-                c.Title.Contains(search) ||
-                c.Instructor.Contains(search) ||
-                c.Category.Contains(search));
-        }
-
-        // Filtrerar på kategori
-        if (!string.IsNullOrWhiteSpace(category))
-        {
-            query = query.Where(c => c.Category == category);
-        }
-
-        // Sorterar kurser
-        if (!string.IsNullOrWhiteSpace(sortBy))
-        {
-            var descending = sortOrder?.ToLower() == "desc";
-
-            query = sortBy.ToLower() switch
-            {
-                "title" => descending ? query.OrderByDescending(c => c.Title) : query.OrderBy(c => c.Title),
-                "category" => descending ? query.OrderByDescending(c => c.Category) : query.OrderBy(c => c.Category),
-                "rating" => descending ? query.OrderByDescending(c => c.Rating) : query.OrderBy(c => c.Rating),
-                "students" => descending ? query.OrderByDescending(c => c.Students) : query.OrderBy(c => c.Students),
-                "duration" => descending ? query.OrderByDescending(c => c.Duration) : query.OrderBy(c => c.Duration),
-                "level" => descending ? query.OrderByDescending(c => c.Level) : query.OrderBy(c => c.Level),
-                _ => query
-            };
-        }
 
         var totalCount = await query.CountAsync();
 
@@ -84,7 +45,8 @@ public class CourseController : ControllerBase
                 c.Image,
                 c.Rating,
                 c.Description,
-                c.Students
+                c.Students,
+                c.StudyProgramId
             ))
             .ToListAsync();
 
@@ -98,7 +60,7 @@ public class CourseController : ControllerBase
         });
     }
 
-    // Hämtar en specifik kurs via id
+    // Hämtar en kurs med id
     [HttpGet("{id}")]
     public async Task<IActionResult> GetCourseById(int id)
     {
@@ -114,7 +76,8 @@ public class CourseController : ControllerBase
                 c.Image,
                 c.Rating,
                 c.Description,
-                c.Students
+                c.Students,
+                c.StudyProgramId
             ))
             .FirstOrDefaultAsync();
 
@@ -145,6 +108,10 @@ public class CourseController : ControllerBase
             Rating = request.Rating,
             Description = request.Description,
             Students = request.Students,
+
+            // Kopplar kursen till ett program
+            StudyProgramId = request.StudyProgramId,
+
             CreatedAt = DateTime.UtcNow
         };
 
@@ -161,7 +128,8 @@ public class CourseController : ControllerBase
             course.Image,
             course.Rating,
             course.Description,
-            course.Students
+            course.Students,
+            course.StudyProgramId
         );
 
         return CreatedAtAction(nameof(GetCourseById), new { id = course.Id }, response);
@@ -192,6 +160,9 @@ public class CourseController : ControllerBase
         course.Description = request.Description;
         course.Students = request.Students;
 
+        // Uppdaterar vilket program kursen tillhör
+        course.StudyProgramId = request.StudyProgramId;
+
         await _context.SaveChangesAsync();
 
         var response = new CourseDto(
@@ -204,7 +175,8 @@ public class CourseController : ControllerBase
             course.Image,
             course.Rating,
             course.Description,
-            course.Students
+            course.Students,
+            course.StudyProgramId
         );
 
         return Ok(response);
@@ -243,5 +215,8 @@ public record CourseDto(
     string Image,
     double Rating,
     string Description,
-    int Students
+    int Students,
+
+    // Program som kursen tillhör
+    int StudyProgramId
 );
