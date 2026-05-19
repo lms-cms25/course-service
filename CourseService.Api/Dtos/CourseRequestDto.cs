@@ -22,8 +22,6 @@ public class CourseRequestDto
 
     public string Image { get; set; } = string.Empty;
 
-    public int StudyProgramId { get; set; }
-
 
     [Range(0, 5, ErrorMessage = "Rating must be between 0 and 5")]
     public double Rating { get; set; }
@@ -34,4 +32,7 @@ public class CourseRequestDto
 
     [Range(0, int.MaxValue, ErrorMessage = "Students cannot be negative")]
     public int Students { get; set; }
+
+    // Id för programmet
+    public int StudyProgramId { get; set; }
 }
