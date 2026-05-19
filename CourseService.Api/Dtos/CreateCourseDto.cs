@@ -13,4 +13,7 @@ public class CreateCourseDto
 
     // Lärare för kursen
     public string Instructor { get; set; } = string.Empty;
+
+    // Program som kursen tillhör
+    public int StudyProgramId { get; set; }
 }
