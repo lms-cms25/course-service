@@ -58,7 +58,7 @@ try
     var db = scope.ServiceProvider.GetRequiredService<CourseDbContext>();
   
   db.Database.Migrate();
-  CourseSeeder.SeedCourses(db);
+  
 }
  
 catch (Exception ex)
