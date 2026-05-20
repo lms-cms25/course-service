@@ -58,16 +58,28 @@ public class ProgramsController : ControllerBase
 
     // Hämtar alla program
     [HttpGet]
+    public async Task<ActionResult<IEnumerable<ProgramResponseDto>>> GetPrograms()
     {
+        var programs = await _context.StudyPrograms
+            .Select(p => new ProgramResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description
+            })
+            .ToListAsync();
 
         return Ok(programs);
     }
 
+    // Hämtar program med id
     [HttpGet("{id}")]
+    public async Task<ActionResult<ProgramResponseDto>> GetProgram(int id)
     {
         var program = await _context.StudyPrograms
             .FirstOrDefaultAsync(p => p.Id == id);
 
+        if (program == null)
         {
             return NotFound(new
             {
@@ -75,12 +87,23 @@ public class ProgramsController : ControllerBase
             });
         }
 
+        var response = new ProgramResponseDto
+        {
+            Id = program.Id,
+            Name = program.Name,
+            Description = program.Description
+        };
+
+        return Ok(response);
     }
 
     // Skapar nytt program
     [Authorize(Roles = "Admin")]
     [HttpPost]
+    public async Task<ActionResult<ProgramResponseDto>> CreateProgram(CreateProgramDto dto)
     {
+        var program = new StudyProgram
+        {
             Name = dto.Name,
             Description = dto.Description
         };
@@ -89,15 +112,25 @@ public class ProgramsController : ControllerBase
 
         await _context.SaveChangesAsync();
 
+        var response = new ProgramResponseDto
+        {
+            Id = program.Id,
+            Name = program.Name,
+            Description = program.Description
+        };
+
+        return CreatedAtAction(nameof(GetProgram), new { id = program.Id }, response);
     }
 
     // Uppdaterar program
     [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProgram(int id, UpdateProgramDto dto)
     {
         var program = await _context.StudyPrograms
             .FirstOrDefaultAsync(p => p.Id == id);
 
+        if (program == null)
         {
             return NotFound(new
             {
@@ -105,9 +138,15 @@ public class ProgramsController : ControllerBase
             });
         }
 
+        program.Name = dto.Name;
+        program.Description = dto.Description;
 
         await _context.SaveChangesAsync();
 
+        return Ok(new
+        {
+            message = "Program updated successfully"
+        });
     }
 
     // Tar bort program
@@ -118,6 +157,7 @@ public class ProgramsController : ControllerBase
         var program = await _context.StudyPrograms
             .FirstOrDefaultAsync(p => p.Id == id);
 
+        if (program == null)
         {
             return NotFound(new
             {
@@ -129,5 +169,9 @@ public class ProgramsController : ControllerBase
 
         await _context.SaveChangesAsync();
 
+        return Ok(new
+        {
+            message = "Program deleted successfully"
+        });
     }
 }
